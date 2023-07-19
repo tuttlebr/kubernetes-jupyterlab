@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jupyter-lab
+  labels:
+    app: jupyter-lab
+spec:
+  selector:
+    matchLabels:
+      app: jupyter-lab
+  template:
+    metadata:
+      labels:
+        app: jupyter-lab
+    spec:
+      containers:
+        - name: jupyter-lab-container
+          image: nvcr.io/nvaie/pytorch-3-1:23.03-nvaie-3.1-py3
+          command:
+            [
+              "jupyter",
+              "lab",
+              "--NotebookApp.ip=0.0.0.0",
+              "--NotebookApp.port=8888",
+              "--NotebookApp.allow_root=True",
+              "--NotebookApp.token=''",
+              "--NotebookApp.password=''",
+              "--no-browser",
+            ]
+          resources:
+            limits:
+              memory: "16Gi"
+              cpu: "10000m"
+              nvidia.com/gpu: "1"
+          ports:
+            - containerPort: 8888
+      imagePullSecrets:
+        - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupyter-lab
+  labels:
+    app: jupyter-lab
+spec:
+  selector:
+    app: jupyter-lab
+  type: NodePort
+  ports:
+    - targetPort: 8888
+      nodePort: 30008
+      port: 8888
+      name: http
+      protocol: TCP
