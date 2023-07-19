@@ -42,7 +42,7 @@ Within `jupyter-lab.yaml`...
 1. Delete the `Deployment` and `Service` resources.
 
    ```sh
-   kubectl apply -f jupyter-lab.yaml
+   kubectl delete -f jupyter-lab.yaml
    ```
 
 2. Delete the `Secret` resource. _(Optional)_
